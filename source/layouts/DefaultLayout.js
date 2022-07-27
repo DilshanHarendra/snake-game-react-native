@@ -1,11 +1,11 @@
 import React from 'react';
 import {View} from 'react-native';
+import {Outlet} from 'react-router-native';
 
-import Player from '../views/Player';
 function DefaultLayout() {
   return (
     <View>
-      <Player />
+      <Outlet />
     </View>
   );
 }
