@@ -1,33 +1,28 @@
 import React from 'react';
-import {FlatList, Text, View} from 'react-native';
+import {FlatList, Text, View, ScrollView} from 'react-native';
 import tw from 'twrnc';
 import SingleUserRow from '../components/SingleUserRow';
 import AddUser from '../components/AddUser';
+import {useSelector} from 'react-redux';
 
 function Users() {
-  return (
-    <View style={tw`px-2`}>
-      <Text style={tw`text-4xl font-semibold ml-2`}>Users</Text>
+  const users = useSelector(state => state.users.users).sort((a, b) =>
+    a.score > b.score ? -1 : 1,
+  );
 
-      <AddUser />
-      <View style={tw`pt-5`}>
-        <FlatList
-          data={[
-            {key: 'Devin'},
-            {key: 'Dan'},
-            {key: 'Dominic'},
-            {key: 'Jackson'},
-            {key: 'James'},
-            {key: 'Joel'},
-            {key: 'John'},
-            {key: 'Jillian'},
-            {key: 'Jimmy'},
-            {key: 'Julie'},
-          ]}
-          renderItem={({item}) => <SingleUserRow />}
-        />
+  return (
+    <ScrollView>
+      <View style={tw`px-2`}>
+        <Text style={tw`text-4xl font-semibold ml-2`}>Users</Text>
+        <AddUser />
+        <View style={tw`pt-5`}>
+          <FlatList
+            data={users}
+            renderItem={({item}) => <SingleUserRow user={item} />}
+          />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 export default Users;
