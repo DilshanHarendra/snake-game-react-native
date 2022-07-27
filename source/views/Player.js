@@ -25,7 +25,7 @@ function Player() {
   const canvas = {
     width: 20,
     height: 20,
-    canvasLength: 20 * mapRemToPx - 4,
+    canvasLength: 20 * mapRemToPx - 4, // canvas length
   };
 
   useEffect(() => {
@@ -62,8 +62,8 @@ function Player() {
     setScore(0);
 
     // create cells
-    const cell1 = new Cell(4, 4, 'bg-yellow-600', 20, 20);
-    const cell2 = new Cell(4, 4, 'bg-yellow-500', 24, 20);
+    const cell1 = new Cell(4, 4, 'bg-yellow-600', 20, 20); // snake head yellow-600
+    const cell2 = new Cell(4, 4, 'bg-yellow-500', 24, 20); // snake body
     const cell3 = new Cell(4, 4, 'bg-yellow-500', 28, 20);
 
     setSnake([cell1, cell2, cell3]);
