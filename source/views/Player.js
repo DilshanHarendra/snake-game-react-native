@@ -2,16 +2,25 @@ import React, {useEffect, useState} from 'react';
 import {Text, View, Dimensions, Button} from 'react-native';
 import tw from 'twrnc';
 import {Cell} from '../shared/Cell';
+import UserAvatar from 'react-native-user-avatar';
 
 function Player() {
   const [isPortrait, setIsPortrait] = useState(true);
   const [direction, setDirection] = useState('R');
   const [snake, setSnake] = useState([]);
   const [isStart, setIsStart] = useState(false);
+  const [isStartRun, setIsStartRun] = useState(false);
+  const [food, setFood] = useState(undefined);
+  const [score, setScore] = useState(0);
 
   const mapRemToPx = 4;
   const moveBy = 4;
-  const canvas = {width: 20, height: 20};
+  const speed = 500;
+  const canvas = {
+    width: 20,
+    height: 20,
+    canvasLength: 20 * mapRemToPx - 4,
+  };
 
   useEffect(() => {
     Dimensions.addEventListener('change', ({window: {width, height}}) => {
@@ -23,31 +32,43 @@ function Player() {
     if (isStart) {
       initGame();
     } else {
-      setSnake([]);
+      reset();
     }
 
     return () => clearInterval(window.interval);
   }, [isStart]);
 
-  function initGame() {
-    // create cells
-    const cell1 = new Cell(4, 4, 'bg-red-600', 20, 20);
-    const cell2 = new Cell(4, 4, 'bg-blue-200', 24, 20);
-    const cell3 = new Cell(4, 4, 'bg-yellow-200', 28, 20);
-    const cell4 = new Cell(4, 4, 'bg-pink-200', 32, 20);
-    setSnake([cell1, cell2, cell3, cell4]);
-    run();
-  }
   useEffect(() => {
     clearInterval(window.interval);
     run();
   }, [direction]);
 
+  useEffect(() => {
+    eat();
+    if (!isStartRun && snake.length > 0) {
+      setIsStartRun(true);
+      run();
+    }
+  }, [snake]);
+
+  function initGame() {
+    clearInterval(window.interval);
+    setScore(0);
+
+    // create cells
+    const cell1 = new Cell(4, 4, 'bg-yellow-600', 20, 20);
+    const cell2 = new Cell(4, 4, 'bg-yellow-500', 24, 20);
+    const cell3 = new Cell(4, 4, 'bg-yellow-500', 28, 20);
+
+    setSnake([cell1, cell2, cell3]);
+    makeFood();
+  }
+
   function run() {
     if (snake.length == 0) {
       return;
     }
-    const canvasLength = canvas.width * mapRemToPx - snake[0].width;
+    const canvasLength = canvas.canvasLength;
 
     window.interval = setInterval(() => {
       let cells = [...snake];
@@ -86,7 +107,7 @@ function Player() {
         }
       }
       setSnake(cells);
-    }, 200);
+    }, speed);
   }
 
   function changeDirection(d) {
@@ -109,12 +130,74 @@ function Player() {
     }
   }
 
+  function makeFood() {
+    var fdx =
+      Math.floor(Math.random() * (canvas.canvasLength / mapRemToPx) + 1) *
+      mapRemToPx;
+    var fdy =
+      Math.floor(Math.random() * (canvas.canvasLength / mapRemToPx) + 1) *
+      mapRemToPx;
+
+    if (snake.length > 0) {
+      for (var i = 0; i < snake.length; i++) {
+        if (snake[i].x == fdx && snake[i].y == fdy) {
+          makeFood();
+        } else {
+          setFood({
+            x: fdx,
+            y: fdy,
+          });
+        }
+      }
+    } else {
+      setFood({
+        x: fdx,
+        y: fdy,
+      });
+    }
+  }
+
+  function eat() {
+    if (snake.length == 0 || !food) {
+      return;
+    }
+    if (food.x == snake[0].x && food.y == snake[0].y) {
+      makeFood();
+      const cell = new Cell(
+        4,
+        4,
+        'bg-yellow-500',
+        snake[snake.length - 1].x,
+        snake[snake.length - 1].y,
+      );
+      clearInterval(window.interval);
+      let arr = [...snake, cell];
+      setIsStartRun(false);
+      setSnake(arr);
+
+      setScore(prevState => prevState + 5);
+    }
+  }
+
+  function reset() {
+    clearInterval(window.interval);
+    setScore(0);
+    setFood(undefined);
+    setSnake([]);
+    setIsStartRun(false);
+    setDirection('R');
+  }
+
   return (
-    <View style={tw`p-2`}>
-      <Text style={tw`text-center font-semibold text-2xl my-3`}>
-        Score {direction}
-      </Text>
-      <Button title={'Start'} onPress={() => setIsStart(!isStart)} />
+    <View style={tw`px-2`}>
+      <View style={tw`my-5 flex-row justify-between items-center`}>
+        <Button title={'Back'} onPress={() => setIsStart(!isStart)} />
+        <Text style={tw`font-semibold text-lg truncate`}>John Doe</Text>
+        <View style={tw`w-10`}>
+          <UserAvatar size={40} name="John Doe" />
+        </View>
+      </View>
+
       <View style={tw`flex-row`}>
         {!isPortrait && (
           <View style={tw`w-20 h-full`}>
@@ -132,6 +215,11 @@ function Player() {
               style={tw`w-${cell.width} h-${cell.height} ${cell.color} p-0 m-0 absolute top-${cell.y} left-${cell.x}`}
             />
           ))}
+          {food && (
+            <View
+              style={tw`w-4 h-4 rounded-full bg-red-600 p-0 m-0 absolute top-${food.y} left-${food.x}`}
+            />
+          )}
         </View>
         {!isPortrait && (
           <View>
@@ -143,10 +231,13 @@ function Player() {
       </View>
       {isPortrait && (
         <View style={tw`mt-10`}>
+          <Text style={tw`text-center font-semibold text-2xl  mb-10`}>
+            Score {score}
+          </Text>
           <Button
             title={'Up'}
             onPress={() => changeDirection('U')}
-            style={tw`bg-blue-500 text-white`}
+            style={tw`bg-blue-500 text-white `}
           />
           <View style={tw`flex-row`}>
             <View style={{flex: 1}}>
