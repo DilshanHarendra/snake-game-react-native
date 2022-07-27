@@ -2,9 +2,8 @@ import {ADD_USER, SET_CURRENT_USER, SET_SCORE} from '../types/userType';
 
 const init = {
   users: [
-    {name: 'Name 1', score: 20},
-    {name: 'Name 2', score: 26},
-    {name: 'Name 3', score: 30},
+    {name: 'Player', score: 20},
+    {name: 'Player 2', score: 25},
   ],
   currentUser: undefined,
 };
