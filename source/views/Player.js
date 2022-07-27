@@ -1,8 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, Dimensions, Button} from 'react-native';
+import {Text, View, Dimensions, Button, TouchableOpacity} from 'react-native';
 import tw from 'twrnc';
 import {Cell} from '../shared/Cell';
 import UserAvatar from 'react-native-user-avatar';
+import {useSelector} from 'react-redux';
+import {useNavigate} from 'react-router-native';
+import {setUserScore} from '../store/actions/user';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function Player() {
   const [isPortrait, setIsPortrait] = useState(true);
@@ -12,6 +16,8 @@ function Player() {
   const [isStartRun, setIsStartRun] = useState(false);
   const [food, setFood] = useState(undefined);
   const [score, setScore] = useState(0);
+  const user = useSelector(state => state.users.currentUser);
+  let navigate = useNavigate();
 
   const mapRemToPx = 4;
   const moveBy = 4;
@@ -174,8 +180,9 @@ function Player() {
       let arr = [...snake, cell];
       setIsStartRun(false);
       setSnake(arr);
-
-      setScore(prevState => prevState + 5);
+      let s = score + 5;
+      setUserScore({...user, score: s});
+      setScore(s);
     }
   }
 
@@ -191,18 +198,29 @@ function Player() {
   return (
     <View style={tw`px-2`}>
       <View style={tw`my-5 flex-row justify-between items-center`}>
-        <Button title={'Back'} onPress={() => setIsStart(!isStart)} />
-        <Text style={tw`font-semibold text-lg truncate`}>John Doe</Text>
+        <Button title={'Back'} onPress={() => navigate('/', {replace: true})} />
+        <Text style={tw`font-semibold text-lg truncate`}>{user.name}</Text>
         <View style={tw`w-10`}>
-          <UserAvatar size={40} name="John Doe" />
+          <UserAvatar size={40} name={user.name} />
         </View>
       </View>
 
       <View style={tw`flex-row`}>
         {!isPortrait && (
-          <View style={tw`w-20 h-full`}>
-            <Button title={'Left'} style={tw`bg-blue-500 text-white`} />
-            <Button title={'Right'} style={tw`bg-blue-500 text-white`} />
+          <View style={tw`w-24 h-full`}>
+            <Text style={tw`text-center font-semibold text-2xl  mb-10`}>
+              Score {score}
+            </Text>
+            <TouchableOpacity
+              onPress={() => changeDirection('U')}
+              style={{...tw`bg-blue-500 p-2 w-12 h-12 mx-auto`}}>
+              <Icon name="arrow-up" size={30} color="#f7f9fa" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => changeDirection('D')}
+              style={{...tw`bg-blue-500 p-2 w-12 h-12 mx-auto mt-8`}}>
+              <Icon name="arrow-down" size={30} color="#f7f9fa" />
+            </TouchableOpacity>
           </View>
         )}
         <View
@@ -223,9 +241,28 @@ function Player() {
         </View>
         {!isPortrait && (
           <View>
-            <Button title={'Left'} style={tw`bg-blue-500 text-white`} />
+            <TouchableOpacity
+              onPress={() => setIsStart(!isStart)}
+              style={{...tw`bg-blue-500 p-3 w-12 h-12 mx-8 mt-4`}}>
+              <Icon
+                name={isStart ? 'pause' : 'play'}
+                size={25}
+                color="#f7f9fa"
+              />
+            </TouchableOpacity>
+            <View style={tw`flex-row justify-center mt-10`}>
+              <TouchableOpacity
+                onPress={() => changeDirection('L')}
+                style={{...tw`bg-blue-500 p-2 w-12 h-12`}}>
+                <Icon name="arrow-left" size={30} color="#f7f9fa" />
+              </TouchableOpacity>
 
-            <Button title={'Right'} style={tw`bg-blue-500 text-white`} />
+              <TouchableOpacity
+                onPress={() => changeDirection('R')}
+                style={{...tw`bg-blue-500 p-2 w-12 h-12 ml-4`}}>
+                <Icon name="arrow-right" size={30} color="#f7f9fa" />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </View>
@@ -234,32 +271,38 @@ function Player() {
           <Text style={tw`text-center font-semibold text-2xl  mb-10`}>
             Score {score}
           </Text>
-          <Button
-            title={'Up'}
+          <TouchableOpacity
             onPress={() => changeDirection('U')}
-            style={tw`bg-blue-500 text-white `}
-          />
-          <View style={tw`flex-row`}>
-            <View style={{flex: 1}}>
-              <Button
-                title={'Left'}
-                onPress={() => changeDirection('L')}
-                style={tw`bg-blue-500 text-white`}
+            style={{...tw`bg-blue-500 p-2 w-12 h-12 mx-auto`}}>
+            <Icon name="arrow-up" size={30} color="#f7f9fa" />
+          </TouchableOpacity>
+          <View style={tw`flex-row justify-center my-4`}>
+            <TouchableOpacity
+              onPress={() => changeDirection('L')}
+              style={{...tw`bg-blue-500 p-2 w-12 h-12`}}>
+              <Icon name="arrow-left" size={30} color="#f7f9fa" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setIsStart(!isStart)}
+              style={{...tw`bg-blue-500 p-3 w-12 h-12 mx-8`}}>
+              <Icon
+                name={isStart ? 'pause' : 'play'}
+                size={25}
+                color="#f7f9fa"
               />
-            </View>
-            <View style={{flex: 1}}>
-              <Button
-                title={'Right'}
-                onPress={() => changeDirection('R')}
-                style={tw`bg-blue-500 text-white`}
-              />
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => changeDirection('R')}
+              style={{...tw`bg-blue-500 p-2 w-12 h-12`}}>
+              <Icon name="arrow-right" size={30} color="#f7f9fa" />
+            </TouchableOpacity>
           </View>
-          <Button
-            title={'Down'}
+          <TouchableOpacity
             onPress={() => changeDirection('D')}
-            style={tw`bg-blue-500 text-white`}
-          />
+            style={{...tw`bg-blue-500 p-2 w-12 h-12 mx-auto`}}>
+            <Icon name="arrow-down" size={30} color="#f7f9fa" />
+          </TouchableOpacity>
         </View>
       )}
     </View>
