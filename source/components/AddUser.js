@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, TextInput, Text, View} from 'react-native';
 import tw from 'twrnc';
-import {addUser} from '../store/actions/user';
+import {addUser} from '../store/actions/userAction';
 import {useSelector} from 'react-redux';
 
 function AddUser() {

@@ -5,7 +5,7 @@ import {Cell} from '../shared/Cell';
 import UserAvatar from 'react-native-user-avatar';
 import {useSelector} from 'react-redux';
 import {useNavigate} from 'react-router-native';
-import {setUserScore} from '../store/actions/user';
+import {setUserScore} from '../store/actions/userAction';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 function Player() {

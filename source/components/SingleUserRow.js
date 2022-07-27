@@ -3,7 +3,7 @@ import {Text, View, TouchableOpacity} from 'react-native';
 import UserAvatar from 'react-native-user-avatar';
 import tw from 'twrnc';
 import {useNavigate} from 'react-router-native';
-import {setCurrentUser} from '../store/actions/user';
+import {setCurrentUser} from '../store/actions/userAction';
 
 function SingleUserRow({user}) {
   let navigate = useNavigate();
