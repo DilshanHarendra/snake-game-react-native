@@ -11,11 +11,15 @@ import type {Node} from 'react';
 import {SafeAreaView} from 'react-native';
 import SnakeGame from './source/SnakeGame';
 
+import {Provider} from 'react-redux';
+import store from './source/store/store';
 const App: () => Node = () => {
   return (
-    <SafeAreaView>
-      <SnakeGame />
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView>
+        <SnakeGame />
+      </SafeAreaView>
+    </Provider>
   );
 };
 
