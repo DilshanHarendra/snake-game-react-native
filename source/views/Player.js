@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, Dimensions, Button, TouchableOpacity} from 'react-native';
+import {Text, View, Dimensions, Button} from 'react-native';
 import tw from 'twrnc';
 import {Cell} from '../shared/Cell';
 import UserAvatar from 'react-native-user-avatar';
 import {useSelector} from 'react-redux';
 import {useNavigate} from 'react-router-native';
 import {setUserScore} from '../store/actions/userAction';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import IconButton from '../components/IconButton';
 
 function Player() {
   const [isPortrait, setIsPortrait] = useState(true);
@@ -21,7 +21,7 @@ function Player() {
 
   const mapRemToPx = 4;
   const moveBy = 4;
-  const speed = 500;
+  const speed = 500; // timer
   const canvas = {
     width: 20,
     height: 20,
@@ -78,6 +78,7 @@ function Player() {
 
     window.interval = setInterval(() => {
       let cells = [...snake];
+      // copy cell data
       for (var i = cells.length - 1; i > 0; i--) {
         cells[i].setX(snake[i - 1].x);
         cells[i].setY(snake[i - 1].y);
@@ -117,22 +118,14 @@ function Player() {
   }
 
   function changeDirection(d) {
-    if (d === 'L') {
-      if (direction != 'R') {
-        setDirection(d);
-      }
-    } else if (d === 'R') {
-      if (direction != 'L') {
-        setDirection(d);
-      }
-    } else if (d === 'U') {
-      if (direction != 'D') {
-        setDirection(d);
-      }
-    } else if (d === 'D') {
-      if (direction != 'U') {
-        setDirection(d);
-      }
+    if (d === 'L' && direction != 'R') {
+      setDirection(d);
+    } else if (d === 'R' && direction != 'L') {
+      setDirection(d);
+    } else if (d === 'U' && direction != 'D') {
+      setDirection(d);
+    } else if (d === 'D' && direction != 'U') {
+      setDirection(d);
     }
   }
 
@@ -145,6 +138,7 @@ function Player() {
       mapRemToPx;
 
     if (snake.length > 0) {
+      // check whether the food is on snake
       for (var i = 0; i < snake.length; i++) {
         if (snake[i].x == fdx && snake[i].y == fdy) {
           makeFood();
@@ -211,16 +205,16 @@ function Player() {
             <Text style={tw`text-center font-semibold text-2xl  mb-10`}>
               Score {score}
             </Text>
-            <TouchableOpacity
+            <IconButton
+              icon="arrow-up"
+              style="mx-auto"
               onPress={() => changeDirection('U')}
-              style={{...tw`bg-blue-500 p-2 w-12 h-12 mx-auto`}}>
-              <Icon name="arrow-up" size={30} color="#f7f9fa" />
-            </TouchableOpacity>
-            <TouchableOpacity
+            />
+            <IconButton
+              icon="arrow-down"
+              style="mx-auto mt-8"
               onPress={() => changeDirection('D')}
-              style={{...tw`bg-blue-500 p-2 w-12 h-12 mx-auto mt-8`}}>
-              <Icon name="arrow-down" size={30} color="#f7f9fa" />
-            </TouchableOpacity>
+            />
           </View>
         )}
         <View
@@ -241,27 +235,21 @@ function Player() {
         </View>
         {!isPortrait && (
           <View>
-            <TouchableOpacity
+            <IconButton
+              icon={isStart ? 'pause' : 'play'}
               onPress={() => setIsStart(!isStart)}
-              style={{...tw`bg-blue-500 p-3 w-12 h-12 mx-8 mt-4`}}>
-              <Icon
-                name={isStart ? 'pause' : 'play'}
-                size={25}
-                color="#f7f9fa"
-              />
-            </TouchableOpacity>
-            <View style={tw`flex-row justify-center mt-10`}>
-              <TouchableOpacity
-                onPress={() => changeDirection('L')}
-                style={{...tw`bg-blue-500 p-2 w-12 h-12`}}>
-                <Icon name="arrow-left" size={30} color="#f7f9fa" />
-              </TouchableOpacity>
+            />
 
-              <TouchableOpacity
+            <View style={tw`flex-row justify-center mt-10`}>
+              <IconButton
+                icon="arrow-left"
+                onPress={() => changeDirection('L')}
+              />
+              <IconButton
+                icon="arrow-right"
                 onPress={() => changeDirection('R')}
-                style={{...tw`bg-blue-500 p-2 w-12 h-12 ml-4`}}>
-                <Icon name="arrow-right" size={30} color="#f7f9fa" />
-              </TouchableOpacity>
+                style=" ml-4"
+              />
             </View>
           </View>
         )}
@@ -271,38 +259,31 @@ function Player() {
           <Text style={tw`text-center font-semibold text-2xl  mb-10`}>
             Score {score}
           </Text>
-          <TouchableOpacity
+          <IconButton
+            icon="arrow-up"
+            style="mx-auto"
             onPress={() => changeDirection('U')}
-            style={{...tw`bg-blue-500 p-2 w-12 h-12 mx-auto`}}>
-            <Icon name="arrow-up" size={30} color="#f7f9fa" />
-          </TouchableOpacity>
+          />
           <View style={tw`flex-row justify-center my-4`}>
-            <TouchableOpacity
+            <IconButton
+              icon="arrow-left"
               onPress={() => changeDirection('L')}
-              style={{...tw`bg-blue-500 p-2 w-12 h-12`}}>
-              <Icon name="arrow-left" size={30} color="#f7f9fa" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
+            />
+            <IconButton
+              icon={isStart ? 'pause' : 'play'}
               onPress={() => setIsStart(!isStart)}
-              style={{...tw`bg-blue-500 p-3 w-12 h-12 mx-8`}}>
-              <Icon
-                name={isStart ? 'pause' : 'play'}
-                size={25}
-                color="#f7f9fa"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
+              style=" mx-8"
+            />
+            <IconButton
+              icon="arrow-right"
               onPress={() => changeDirection('R')}
-              style={{...tw`bg-blue-500 p-2 w-12 h-12`}}>
-              <Icon name="arrow-right" size={30} color="#f7f9fa" />
-            </TouchableOpacity>
+            />
           </View>
-          <TouchableOpacity
+          <IconButton
+            icon="arrow-down"
             onPress={() => changeDirection('D')}
-            style={{...tw`bg-blue-500 p-2 w-12 h-12 mx-auto`}}>
-            <Icon name="arrow-down" size={30} color="#f7f9fa" />
-          </TouchableOpacity>
+            style="mx-auto"
+          />
         </View>
       )}
     </View>
