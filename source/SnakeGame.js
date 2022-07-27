@@ -1,11 +1,11 @@
 import React from 'react';
 import {View} from 'react-native';
 
-import DefaultLayout from './layouts/DefaultLayout';
+import Router from './router/Router';
 function SnakeGame() {
   return (
     <View>
-      <DefaultLayout />
+      <Router />
     </View>
   );
 }
