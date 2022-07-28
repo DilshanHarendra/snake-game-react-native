@@ -193,7 +193,7 @@ function Player() {
     <View style={tw`px-2`}>
       <View style={tw`my-5 flex-row justify-between items-center`}>
         <Button title={'Back'} onPress={() => navigate('/', {replace: true})} />
-        <Text style={tw`font-semibold text-lg truncate`}>{user.name}</Text>
+        <Text style={tw`font-semibold text-lg`}>{user.name}</Text>
         <View style={tw`w-10`}>
           <UserAvatar size={40} name={user.name} />
         </View>

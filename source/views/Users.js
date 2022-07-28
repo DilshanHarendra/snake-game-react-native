@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList, Text, View, ScrollView} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import tw from 'twrnc';
 import SingleUserRow from '../components/SingleUserRow';
 import AddUser from '../components/AddUser';
@@ -11,18 +11,16 @@ function Users() {
   );
 
   return (
-    <ScrollView>
-      <View style={tw`px-2`}>
-        <Text style={tw`text-4xl font-semibold ml-2`}>Users</Text>
-        <AddUser />
-        <View style={tw`pt-5`}>
-          <FlatList
-            data={users}
-            renderItem={({item}) => <SingleUserRow user={item} />}
-          />
-        </View>
+    <View style={tw`px-2`}>
+      <Text style={tw`text-4xl font-semibold ml-2`}>Users</Text>
+      <AddUser />
+      <View style={tw`pt-5`}>
+        <FlatList
+          data={users}
+          renderItem={({item}) => <SingleUserRow user={item} />}
+        />
       </View>
-    </ScrollView>
+    </View>
   );
 }
 export default Users;
